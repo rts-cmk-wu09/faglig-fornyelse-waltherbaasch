@@ -1,25 +1,42 @@
-import logo from './logo.svg';
+import React, { useState } from 'react';
+import axios from 'axios';
 import './App.css';
 
 function App() {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [playerStats, setPlayerStats] = useState(null);
+
+  const handleSearch = async () => {
+    try {
+      const response = await axios.get(`https://api.eksempel.com/football/stats?player=${searchQuery}`);
+      setPlayerStats(response.data);
+    } catch (error) {
+      console.error('Error fetching player stats:', error);
+    }
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Football Player Stats App</h1>
+      <input
+        type="text"
+        placeholder="Enter player name"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+      />
+      <button onClick={handleSearch}>Search</button>
+
+      {playerStats && (
+        <div>
+          <h2>Player Stats for {playerStats.name}</h2>
+          <p>Goals: {playerStats.goals}</p>
+          <p>Assists: {playerStats.assists}</p>
+          {/* Flere stats her */}
+        </div>
+      )}
     </div>
   );
 }
 
 export default App;
+
